@@ -162,8 +162,15 @@
     <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
     
     <div class="admin-header">
-      <h1>إدارة محتوى موقع شيرين</h1>
-      <p>أضيفي قصصك وخواطرك الجديدة بسهولة</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <h1 style="margin: 0;">إدارة محتوى موقع شيرين</h1>
+          <p style="margin: 5px 0 0 0;">أضيفي قصصك وخواطرك الجديدة بسهولة</p>
+        </div>
+        <button onclick="logout()" class="btn btn-ghost" style="color: #dc2626; border-color: #dc2626;">
+          تسجيل خروج 🚪
+        </button>
+      </div>
     </div>
 
     <div class="success-message" id="successMessage">
@@ -219,10 +226,54 @@
   </div>
 
   <script>
+    // التحقق من تسجيل الدخول
+    function checkAuth() {
+      const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+      const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0');
+      const currentTime = Date.now();
+      const sessionDuration = 24 * 60 * 60 * 1000; // 24 ساعة
+      
+      if (isLoggedIn !== 'true' || (currentTime - loginTime > sessionDuration)) {
+        // إزالة الجلسة المنتهية الصلاحية
+        sessionStorage.removeItem('adminLoggedIn');
+        sessionStorage.removeItem('loginTime');
+        
+        // إعادة توجيه إلى صفحة تسجيل الدخول
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // تحديث وقت الجلسة عند النشاط
+    function updateSession() {
+      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        sessionStorage.setItem('loginTime', Date.now().toString());
+      }
+    }
+
+    // تسجيل الخروج
+    function logout() {
+      if (confirm('هل أنت متأكدة من تسجيل الخروج؟')) {
+        sessionStorage.removeItem('adminLoggedIn');
+        sessionStorage.removeItem('loginTime');
+        window.location.href = 'index.html';
+      }
+    }
+
     // تحميل المحتوى المحفوظ عند فتح الصفحة
     document.addEventListener('DOMContentLoaded', function() {
+      // التحقق من الصلاحية أولاً
+      if (!checkAuth()) {
+        return;
+      }
+      
       loadSavedContent();
       updateMainSiteContent();
+      
+      // تحديث الجلسة عند أي نشاط
+      document.addEventListener('click', updateSession);
+      document.addEventListener('keypress', updateSession);
     });
 
     // إرسال النموذج

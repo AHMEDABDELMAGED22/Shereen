@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - إدارة موقع شيرين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--sky-50), var(--sky-100));
+      padding: 20px;
+    }
+    
+    .login-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(56,189,248,.22);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .login-header {
+      margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+      margin: 0 0 10px 0;
+      color: var(--text);
+      font-size: 1.8rem;
+    }
+    
+    .login-header p {
+      color: var(--muted);
+      margin: 0;
+    }
+    
+    .login-form {
+      text-align: right;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: right;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--sky-200);
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      text-align: right;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--sky-400);
+    }
+    
+    .error-message {
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      text-align: center;
+      border: 1px solid #fecaca;
+    }
+    
+    .login-actions {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--sky-600);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    
+    .back-link:hover {
+      color: var(--sky-700);
+    }
+    
+    .password-hint {
+      background: var(--sky-50);
+      border: 1px solid var(--sky-200);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .lock-icon {
+      font-size: 3rem;
+      color: var(--sky-400);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="lock-icon">🔒</div>
+        <h1>تسجيل الدخول</h1>
+        <p>أدخلي كلمة السر للوصول إلى لوحة الإدارة</p>
+      </div>
+
+      <div class="error-message" id="errorMessage">
+        كلمة السر غير صحيحة. حاولي مرة أخرى.
+      </div>
+
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label for="password">كلمة السر</label>
+          <input type="password" id="password" name="password" placeholder="أدخلي كلمة السر" required>
+        </div>
+
+        <div class="login-actions">
+          <button type="submit" class="btn btn-primary">دخول</button>
+          <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
+        </div>
+      </form>
+
+      <div class="password-hint">
+        💡 إذا نسيت كلمة السر، يمكنك تغييرها من خلال تعديل الملف البرمجي
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // كلمة السر الافتراضية - يمكن تغييرها هنا
+    const ADMIN_PASSWORD = "22112004";
+    
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('errorMessage');
+      
+      if (password === ADMIN_PASSWORD) {
+        // حفظ حالة تسجيل الدخول
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        sessionStorage.setItem('loginTime', Date.now().toString());
+        
+        // إعادة توجيه إلى صفحة الإدارة
+        window.location.href = 'admin.html';
+      } else {
+        // إظهار رسالة خطأ
+        errorMessage.style.display = 'block';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+        
+        // إخفاء رسالة الخطأ بعد 3 ثوان
+        setTimeout(() => {
+          errorMessage.style.display = 'none';
+        }, 3000);
+      }
+    });
+
+    // التركيز على حقل كلمة السر عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('password').focus();
+    });
+
+    // التحقق من وجود جلسة سابقة
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+      const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0');
+      const currentTime = Date.now();
+      const sessionDuration = 24 * 60 * 60 * 1000; // 24 ساعة
+      
+      if (currentTime - loginTime < sessionDuration) {
+        // الجلسة ما زالت صالحة
+        window.location.href = 'admin.html';
+      } else {
+        // انتهت صلاحية الجلسة
+        sessionStorage.removeItem('adminLoggedIn');
+        sessionStorage.removeItem('loginTime');
+      }
+    }
+  </script>
+</body>
+</html>
