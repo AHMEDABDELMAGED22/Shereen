@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة محتوى موقع شيرين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--sky-50), var(--sky-100));
+      border-radius: var(--radius);
+      border: 1px solid rgba(56,189,248,.2);
+    }
+    
+    .admin-form {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(56,189,248,.22);
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--sky-200);
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--sky-400);
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .full-text-area {
+      min-height: 300px;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .success-message {
+      background: #dcfce7;
+      color: #166534;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      text-align: center;
+    }
+    
+    .content-list {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(56,189,248,.22);
+    }
+    
+    .content-item {
+      padding: 20px;
+      border-bottom: 1px solid rgba(56,189,248,.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .content-item:last-child {
+      border-bottom: none;
+    }
+    
+    .content-info h4 {
+      margin: 0 0 5px 0;
+      color: var(--text);
+    }
+    
+    .content-info .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .content-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 14px;
+      min-height: auto;
+    }
+    
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--sky-600);
+      text-decoration: none;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .back-link:hover {
+      color: var(--sky-700);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
+    
+    <div class="admin-header">
+      <h1>إدارة محتوى موقع شيرين</h1>
+      <p>أضيفي قصصك وخواطرك الجديدة بسهولة</p>
+    </div>
+
+    <div class="success-message" id="successMessage">
+      تم حفظ المحتوى بنجاح! ✅
+    </div>
+
+    <form class="admin-form" id="contentForm">
+      <h2>إضافة محتوى جديد</h2>
+      
+      <div class="form-group">
+        <label for="contentType">نوع المحتوى</label>
+        <select id="contentType" name="contentType" required>
+          <option value="">اختاري نوع المحتوى</option>
+          <option value="story">قصة قصيرة</option>
+          <option value="thought">خاطرة</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="title">العنوان</label>
+        <input type="text" id="title" name="title" placeholder="عنوان القصة أو الخاطرة" required>
+      </div>
+
+      <div class="form-group">
+        <label for="excerpt">المقطع التشويقي</label>
+        <textarea id="excerpt" name="excerpt" placeholder="اكتبي بداية جذابة للمحتوى (سيظهر في الكارت)" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="fullText">النص الكامل</label>
+        <textarea id="fullText" name="fullText" class="full-text-area" placeholder="اكتبي النص كاملاً هنا..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="readingTime">زمن القراءة (بالدقائق)</label>
+        <input type="number" id="readingTime" name="readingTime" min="1" max="60" placeholder="مثال: 3" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">حفظ المحتوى</button>
+        <button type="button" class="btn btn-ghost" onclick="clearForm()">مسح النموذج</button>
+      </div>
+    </form>
+
+    <div class="content-list">
+      <h2 style="padding: 20px 20px 0; margin: 0;">المحتوى المحفوظ</h2>
+      <div id="contentList">
+        <div class="empty-state">
+          لا يوجد محتوى محفوظ بعد
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // تحميل المحتوى المحفوظ عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+      loadSavedContent();
+      updateMainSiteContent();
+    });
+
+    // إرسال النموذج
+    document.getElementById('contentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveContent();
+    });
+
+    function saveContent() {
+      const formData = new FormData(document.getElementById('contentForm'));
+      const content = {
+        id: Date.now().toString(),
+        type: formData.get('contentType'),
+        title: formData.get('title'),
+        excerpt: formData.get('excerpt'),
+        fullText: formData.get('fullText'),
+        readingTime: formData.get('readingTime'),
+        publishDate: new Date().toLocaleDateString('ar-EG', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }),
+        timestamp: Date.now()
+      };
+
+      // حفظ في Local Storage
+      let savedContent = JSON.parse(localStorage.getItem('shirineContent') || '[]');
+      savedContent.unshift(content); // إضافة في المقدمة
+      localStorage.setItem('shirineContent', JSON.stringify(savedContent));
+
+      // إظهار رسالة النجاح
+      const successMsg = document.getElementById('successMessage');
+      successMsg.style.display = 'block';
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+      }, 3000);
+
+      // مسح النموذج
+      clearForm();
+
+      // تحديث قائمة المحتوى
+      loadSavedContent();
+
+      // تحديث الموقع الرئيسي
+      updateMainSiteContent();
+    }
+
+    function loadSavedContent() {
+      const savedContent = JSON.parse(localStorage.getItem('shirineContent') || '[]');
+      const contentList = document.getElementById('contentList');
+
+      if (savedContent.length === 0) {
+        contentList.innerHTML = '<div class="empty-state">لا يوجد محتوى محفوظ بعد</div>';
+        return;
+      }
+
+      contentList.innerHTML = savedContent.map(content => `
+        <div class="content-item">
+          <div class="content-info">
+            <h4>${content.title}</h4>
+            <div class="meta">
+              ${content.type === 'story' ? 'قصة قصيرة' : 'خاطرة'} • 
+              ${content.publishDate} • 
+              ${content.readingTime} دقيقة
+            </div>
+          </div>
+          <div class="content-actions">
+            <button class="btn btn-small btn-danger" onclick="deleteContent('${content.id}')">
+              حذف
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteContent(id) {
+      if (confirm('هل أنت متأكدة من حذف هذا المحتوى؟')) {
+        let savedContent = JSON.parse(localStorage.getItem('shirineContent') || '[]');
+        savedContent = savedContent.filter(content => content.id !== id);
+        localStorage.setItem('shirineContent', JSON.stringify(savedContent));
+        
+        loadSavedContent();
+        updateMainSiteContent();
+      }
+    }
+
+    function clearForm() {
+      document.getElementById('contentForm').reset();
+    }
+
+    // تحديث محتوى الموقع الرئيسي
+    function updateMainSiteContent() {
+      const savedContent = JSON.parse(localStorage.getItem('shirineContent') || '[]');
+      
+      // إنشاء HTML للكارتات الجديدة
+      const newCardsHTML = savedContent.map(content => `
+        <article class="card dynamic-content" data-category="${content.type}" data-full="${content.fullText.replace(/"/g, '&quot;')}">
+          <div class="tag">${content.type === 'story' ? 'قصة قصيرة' : 'خاطرة'}</div>
+          <h3>${content.title}</h3>
+          <div class="meta">نُشرت: ${content.publishDate} • زمن القراءة: ${content.readingTime} دقيقة</div>
+          <p class="excerpt">${content.excerpt}</p>
+          <div class="actions">
+            <button class="btn btn-primary read-more">اقرئي المزيد</button>
+            <button class="btn btn-ghost copy-link">نسخ رابط</button>
+          </div>
+        </article>
+      `).join('');
+
+      // حفظ HTML في Local Storage للاستخدام في الموقع الرئيسي
+      localStorage.setItem('dynamicCardsHTML', newCardsHTML);
+    }
+  </script>
+</body>
+</html>

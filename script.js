@@ -51,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.read-more').forEach(btn => {
     btn.textContent = 'أقرئني المزيد';
   });
+  
+  // تحميل المحتوى الديناميكي
+  loadDynamicContent();
 });
 
 const quotes = [
@@ -75,3 +78,61 @@ setInterval(()=>{
 const hq = quotes[Math.floor(Math.random()*quotes.length)];
 document.getElementById('heroQuote').textContent = `"${hq.t}"`;
 document.getElementById('heroAuthor').textContent = `— ${hq.a}`;
+
+// وظيفة تحميل المحتوى الديناميكي
+function loadDynamicContent() {
+  const dynamicHTML = localStorage.getItem('dynamicCardsHTML');
+  if (dynamicHTML) {
+    const cardsContainer = document.getElementById('cards');
+    if (cardsContainer) {
+      // إضافة المحتوى الجديد في بداية الكونتينر
+      cardsContainer.insertAdjacentHTML('afterbegin', dynamicHTML);
+      
+      // إعادة تفعيل event listeners للكارتات الجديدة
+      attachEventListeners();
+    }
+  }
+}
+
+// إعادة تفعيل event listeners
+function attachEventListeners() {
+  // للأزرار "اقرئي المزيد"
+  document.querySelectorAll('.read-more').forEach(btn => {
+    btn.removeEventListener('click', handleReadMore); // إزالة المستمع السابق
+    btn.addEventListener('click', handleReadMore);
+  });
+  
+  // لأزرار "نسخ رابط"
+  document.querySelectorAll('.copy-link').forEach(btn => {
+    btn.removeEventListener('click', handleCopyLink); // إزالة المستمع السابق
+    btn.addEventListener('click', handleCopyLink);
+  });
+}
+
+// وظيفة معالجة "اقرئي المزيد"
+function handleReadMore(e) {
+  const card = e.target.closest('.card');
+  const title = card.querySelector('h3').textContent;
+  const fullText = card.getAttribute('data-full') || '—';
+  
+  const readerTitle = document.getElementById('readerTitle');
+  const readerBody = document.getElementById('readerBody');
+  const modal = document.getElementById('reader');
+  
+  readerTitle.textContent = title;
+  readerBody.textContent = fullText;
+  readerBody.style.whiteSpace = 'pre-wrap';
+  readerBody.style.lineHeight = '2';
+  modal.showModal();
+}
+
+// وظيفة معالجة "نسخ رابط"
+function handleCopyLink(e) {
+  const card = e.target.closest('.card');
+  const slug = card.querySelector('h3').textContent.trim().replace(/\s+/g,'-');
+  const url = location.origin + location.pathname + `#` + encodeURIComponent(slug);
+  navigator.clipboard.writeText(url).then(() => {
+    e.target.textContent = 'تم النسخ ✅';
+    setTimeout(() => e.target.textContent = 'نسخ رابط', 1200);
+  });
+}
